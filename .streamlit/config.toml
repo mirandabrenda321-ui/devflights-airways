@@ -1,0 +1,9 @@
+[theme]
+primaryColor = "#7D3C98"    # Violeta DevLights (Botones, Sliders, Focus)
+backgroundColor = "#FFFFFF" # Fondo general (en modo Light)
+secondaryBackgroundColor = "#F0F2F6" # Fondo de la barra lateral (Gris muy suave)
+textColor = "#262730"       # Texto oscuro para legibilidad
+font = "sans serif"
+
+[server]
+headless = true
