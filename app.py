@@ -53,11 +53,39 @@ st.markdown("""
 def load_data():
     engine = get_db_engine()
     df = pd.read_sql(GET_SALES_MASTER_DATA, engine)
-    df['date'] = pd.to_datetime(df['date'])
-    df['revenue'] = df['revenue'].astype(float)
-    # Nos aseguramos que el año sea entero
+    
+    # 1. Optimización de Texto -> Category (El mayor ahorro de RAM)
+    # Pandas guarda el texto una sola vez y usa índices numéricos pequeños
+    cat_cols = [
+        'month', 'day_name', 'quarter', 'route_name', 
+        'origin_city', 'origin_country', 'dest_city', 'dest_country', 
+        'aircraft_model', 'manufacturer', 'size_category', 
+        'service_class', 'age_group', 'passenger_nationality'
+    ]
+    
+    for col in cat_cols:
+        if col in df.columns:
+            df[col] = df[col].astype('category')
+
+    # 2. Optimización Numérica (Downcasting)
+    # Usar 32 bits en lugar de 64 bits (ahorra 50% en estas columnas)
+    if 'revenue' in df.columns:
+        df['revenue'] = pd.to_numeric(df['revenue'], downcast='float')
+    
+    if 'tickets_sold' in df.columns:
+        df['tickets_sold'] = pd.to_numeric(df['tickets_sold'], downcast='integer')
+        
+    if 'lead_time' in df.columns:
+        df['lead_time'] = pd.to_numeric(df['lead_time'], downcast='float')
+
+    # 3. Fechas
+    if 'date' in df.columns:
+        df['date'] = pd.to_datetime(df['date'])
+        
+    # Validar integridad básica
     if 'year' in df.columns:
-        df['year'] = df['year'].astype(int)
+        df['year'] = df['year'].astype('int16') # Ahorra más que int32
+
     return df
 
 try:
@@ -142,9 +170,8 @@ with tab_geo:
     
     with c2:
         # Agrupación para mapa
-        map_df = df.groupby(['route_name', 'origin_lat', 'origin_lon', 'dest_lat', 'dest_lon', 'origin_city']).agg(
-            rev=('revenue', 'sum')
-        ).reset_index().sort_values('rev', ascending=False).head(n_rutas)
+        map_df = df.groupby(['route_name', 'origin_lat', 'origin_lon', 'dest_lat', 'dest_lon', 'origin_city'],
+                            observed=True).agg(rev=('revenue', 'sum')).reset_index().sort_values('rev', ascending=False).head(n_rutas)
         
         fig_map = go.Figure()
         
