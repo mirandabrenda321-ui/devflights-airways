@@ -1,4 +1,4 @@
-# ✈️ DevLights Airways | Business Intelligence Dashboard
+# ✈️ DevFlights Airways | Business Intelligence Dashboard
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.40%2B-FF4B4B)
@@ -11,7 +11,7 @@
 
 ## 📖 Descripción del Proyecto
 
-Este proyecto representa la evolución del análisis de datos para **DevLights Airways**. Se ha migrado de reportes estáticos a una **Aplicación Web Interactiva** que permite a los directivos explorar métricas clave (KPIs) en tiempo real.
+Este proyecto representa la evolución del análisis de datos para **DevFlights Airways**. Se ha migrado de reportes estáticos a una **Aplicación Web Interactiva** que permite a los directivos explorar métricas clave (KPIs) en tiempo real.
 
 La solución se construye sobre un **Data Warehouse con Esquema Estrella**, procesando grandes volúmenes de transacciones de vuelos, reservas y flota para ofrecer insights sobre rentabilidad, eficiencia operativa y comportamiento del cliente.
 
@@ -35,8 +35,8 @@ El proyecto sigue una arquitectura desacoplada y modular:
 ### Estructura del Repositorio
 
 ```bash
-devlights_analytics/
-├── .streamlit/          # Configuración del tema (Branding DevLights) y Secretos
+devflights_analytics/
+├── .streamlit/          # Configuración del tema (Branding DevFlights) y Secretos
 ├── assets/              # Recursos estáticos (Logos, imágenes)
 ├── src/
 │   ├── database.py      # Gestión de conexión a DB (Engine & Caching)
@@ -98,8 +98,8 @@ Este proyecto utiliza [uv](https://github.com/astral-sh/uv) para una gestión de
 #### 1️⃣ Clonar el repositorio:
 
 ```bash
-git clone https://github.com/tu-usuario/devlights-analytics.git
-cd devlights-analytics
+git clone https://github.com/tu-usuario/devflights-analytics.git
+cd devflights-analytics
 ```
 
 #### 2️⃣ Configurar Variables de Entorno
@@ -110,7 +110,7 @@ Crea un archivo `.streamlit/secrets.toml` con las credenciales de base de datos:
 [postgres]
 host = "localhost"
 port = "5432"
-dbname = "devlights_airways"
+dbname = "devflights_airways"
 user = "tu_usuario"
 password = "tu_password"
 ```
@@ -137,6 +137,6 @@ uv run streamlit run app.py
 
 ## 👨‍💻 Créditos
 
-Desarrollado como proyecto final de Data Analytics de DevLights.
+Desarrollado como proyecto final de Data Analytics de DevFlights.
 
-DevLights Airways © 2025
+DevFlights Airways © 2025

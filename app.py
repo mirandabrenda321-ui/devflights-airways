@@ -6,11 +6,11 @@ from src.database import get_db_engine
 from src.queries import GET_SALES_MASTER_DATA
 
 # -----------------------------------------------------------------------------
-# 1. SETUP & BRANDING (DevLights Theme)
+# 1. SETUP & BRANDING (DevFlights Theme)
 # -----------------------------------------------------------------------------
 
 st.set_page_config(
-    page_title="DevLights Airways - Dashboard",
+    page_title="DevFlights Airways - Dashboard",
     page_icon="✈️",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -98,7 +98,7 @@ except Exception as e:
 # -----------------------------------------------------------------------------
 # 3. SIDEBAR (FILTROS GLOBALES)
 # -----------------------------------------------------------------------------
-st.sidebar.image("assets/devlights_logo.jpg", use_container_width=True) 
+st.sidebar.image("assets/devflights_logo.jpg", use_container_width=True) 
 st.sidebar.markdown("---")
 st.sidebar.header("🔍 Panel de Control")
 
@@ -131,7 +131,7 @@ if df.empty:
 # -----------------------------------------------------------------------------
 # 4. HEADER & KPIs MACRO
 # -----------------------------------------------------------------------------
-st.title("DevLights Airways | Analytics")
+st.title("DevFlights Airways | Analytics")
 st.markdown(f"**Tablero Ejecutivo - Periodo {int(sel_year)}**")
 
 # KPIs Generales
@@ -243,13 +243,54 @@ with tab_biz:
         pie_dim = st.selectbox("Dimensión", ["Clase", "Avión"])
         dim_col = "service_class" if "Clase" in pie_dim else "size_category"
         
+        pie_data = df.groupby(dim_col)['revenue'].sum().reset_index()
+        
+        # Mapear size_category a nombres cortos si es necesario
+        if dim_col == "size_category":
+            size_mapping = {
+                'Small': 'Pequeño',
+                'small': 'Pequeño',
+                'Medium': 'Mediano',
+                'medium': 'Mediano',
+                'Large': 'Grande',
+                'large': 'Grande'
+            }
+            pie_data['label_short'] = pie_data[dim_col].map(size_mapping).fillna(pie_data[dim_col])
+        else:
+            pie_data['label_short'] = pie_data[dim_col]
+        
+        # Colores más diferenciados para mejor contraste en la leyenda
+        custom_colors = ['#4A148C', '#7D3C98', '#9B59B6', '#BA68C8', '#CE93D8']
+        
         fig_pie = px.pie(
-            df.groupby(dim_col)['revenue'].sum().reset_index(),
-            values='revenue', names=dim_col,
+            pie_data,
+            values='revenue', names='label_short',
             hole=0.5,
-            color_discrete_sequence=px.colors.sequential.Purples_r
+            color_discrete_sequence=custom_colors[:len(pie_data)]
         )
-        fig_pie.update_layout(showlegend=False, annotations=[dict(text='Share', x=0.5, y=0.5, font_size=18, showarrow=False)])
+        fig_pie.update_traces(
+            texttemplate='%{percent}',
+            textposition='inside',
+            textfont=dict(size=16, color='white'),
+            insidetextorientation='horizontal',
+            textinfo='percent',
+            hovertemplate='<b>%{label}</b><br>Ingresos: $%{value:,.0f}<br>Porcentaje: %{percent}<extra></extra>'
+        )
+        fig_pie.update_layout(
+            showlegend=True,
+            legend=dict(
+                orientation="v",
+                yanchor="middle",
+                y=0.5,
+                xanchor="left",
+                x=1.02,
+                font=dict(size=15, color='#7D3C98', family='Arial'),
+                bgcolor='rgba(255,255,255,0.8)',
+                bordercolor='#7D3C98',
+                borderwidth=1
+            ),
+            annotations=[dict(text='Share', x=0.5, y=0.5, font_size=18, showarrow=False)]
+        )
         st.plotly_chart(fig_pie, use_container_width=True)
 
 # --- TAB 3: FLOTA (Pregunta 3 del Doc) ---
@@ -298,8 +339,8 @@ with tab_crm:
             df, x="lead_time",
             nbins=bins_slider,
             color="service_class",
-            color_discrete_sequence=["#7D3C98", "#AF7AC5", "#D7BDE2"],
-            opacity=0.7,
+            color_discrete_sequence=["#4A148C", "#7D3C98", "#BA68C8"],
+            opacity=0.85,
             labels={"lead_time": "Días de Anticipación", "count": "Transacciones"},
             title="Distribución de Anticipación por Clase"
         )
@@ -322,8 +363,17 @@ with tab_crm:
         fig_bar_demo = px.bar(
             demo_data, x=x_ax, y='tickets_sold',
             color='tickets_sold',
-            color_continuous_scale="Purples",
+            color_continuous_scale=[[0, '#CE93D8'], [0.3, '#9B59B6'], [0.7, '#7D3C98'], [1, '#6A1B9A']],
             title=f"Pasajeros por {demo_dim}"
+        )
+        fig_bar_demo.update_traces(
+            marker=dict(
+                colorbar=dict(
+                    title="Pasajeros",
+                    thicknessmode="pixels",
+                    thickness=15
+                )
+            )
         )
         st.plotly_chart(fig_bar_demo, use_container_width=True)
 

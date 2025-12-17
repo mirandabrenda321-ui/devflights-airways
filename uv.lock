@@ -117,7 +117,7 @@ wheels = [
 ]
 
 [[package]]
-name = "devlights-analytics"
+name = "devflights-analytics"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
