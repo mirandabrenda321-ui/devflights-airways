@@ -48,6 +48,35 @@ devflights_analytics/
 
 ---
 
+## 🗃️ Estructura de la Base de Datos
+
+El proyecto utiliza un Data Warehouse con esquema estrella en PostgreSQL, que consta de tablas de hechos y dimensiones para análisis avanzado.
+
+### Esquema Analítico
+
+#### Tablas de Hechos
+- **fact_ventas**: Registra transacciones de ventas con métricas clave como ingresos y días de anticipación.
+
+#### Dimensiones
+- **dim_avion**: Información detallada de la flota aérea
+- **dim_pasajero**: Datos demográficos y de segmentación de pasajeros
+- **dim_ruta**: Detalles de rutas con información geográfica
+- **dim_tiempo**: Dimensión temporal para análisis de series de tiempo
+
+### Scripts de Base de Datos
+- `dbanalitica.sql`: Script SQL que crea y pobla el esquema analítico
+- `scripts_db_analitica`: Scripts en txt para la base de datos analítica
+
+### Configuración con Docker
+El directorio `docker/` contiene la configuración necesaria para levantar la base de datos en un contenedor Docker, incluyendo:
+- Configuración de PostgreSQL
+- Volúmenes para persistencia de datos
+- Scripts de inicialización
+
+### Documentación Adicional
+- `devflights airways - proyecto final.pdf`: Documentación completa del proyecto
+- `devflights airways resumido.pptx`: Presentación ejecutiva
+
 ## 📊 Módulos y KPIs Analizados
 
 El Dashboard está organizado en 5 pestañas estratégicas que responden a las necesidades del negocio:
