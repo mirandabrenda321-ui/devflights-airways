@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # --- Base de Datos: PostgreSQL ---
+  postgres:
+    image: postgres:16
+    container_name: mi_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: brenda
+      POSTGRES_PASSWORD: brenda123
+      POSTGRES_DB: devligths_airways
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data # Persistencia de datos
+
+  # --- Admin UI: pgAdmin 4 ---
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: mi_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+
+  # --- Business Intelligence: Metabase ---
+  metabase:
+    image: metabase/metabase
+    container_name: mi_metabase
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    # Opcional: Persistencia de la config interna de Metabase
+    volumes:
+      - ./metabase_data:/metabase-data

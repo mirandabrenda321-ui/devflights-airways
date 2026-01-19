@@ -11,3 +11,29 @@ wheels/
 
 # Streamlit secrets
 .streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual envs
+.venv/
+venv/
+.env/
+
+# uv
+.uv/
+
+# Streamlit
+.streamlit/cache/
+
+# Data / DB
+*.db
+*.sqlite
+*.csv
+*.parquet
+
+# OS
+.DS_Store

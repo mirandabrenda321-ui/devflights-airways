@@ -1,23 +1,27 @@
 import streamlit as st
 from sqlalchemy import create_engine
 
-# Cacheamos la conexión para no abrir una nueva cada vez que alguien toca un botón
 @st.cache_resource
 def get_db_engine():
-    # Leemos los secretos que configuraste en Streamlit Cloud
     db_config = st.secrets["postgres"]
-    
-    # Construimos la URL de conexión (Connection String)
-    # Formato: postgresql+psycopg2://user:password@host:port/dbname
-    database_url = f"postgresql+psycopg2://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['dbname']}"
-    
-    # CREAMOS EL MOTOR CON SSL REQUERIDO
-    # Esto es lo critico: connect_args={"sslmode": "require"}
+
+    database_url = (
+        f"postgresql+psycopg2://{db_config['user']}:{db_config['password']}"
+        f"@{db_config['host']}:{db_config['port']}/{db_config['dbname']}"
+    )
+
+    # 👉 SI es localhost / docker → NO SSL
+    # 👉 SI es Supabase / cloud → SSL
+    if db_config["host"] in ["localhost", "127.0.0.1"]:
+        connect_args = {"sslmode": "disable"}
+    else:
+        connect_args = {"sslmode": "require"}
+
     engine = create_engine(
         database_url,
-        connect_args={"sslmode": "require"}, # Obligatorio para Supabase
-        pool_pre_ping=True, # Verifica que la conexión esté viva antes de usarla
-        pool_recycle=3600   # Recicla conexiones cada hora para evitar cortes
+        connect_args=connect_args,
+        pool_pre_ping=True,
+        pool_recycle=3600
     )
-    
+
     return engine
